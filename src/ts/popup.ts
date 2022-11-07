@@ -11,7 +11,7 @@ const resetZoom = $("reset-zoom");
 const applyAll = $("apply-all");
 const zoomMode = $("zoom-mode");
 
-const modeMap1 = {
+const modeMap = {
   browser: "css",
   css: "browser",
 };
@@ -25,7 +25,7 @@ function load() {
   chrome.storage.sync.get(["zoom-tool-set", "mode"], (res) => {
     let num = Number.parseInt(res["zoom-tool-set"]);
     zoom = num >= 10 && num <= 300 ? num : 100;
-    mode = res["mode"] || Object.keys(modeMap1)[0];
+    mode = res["mode"] || Object.keys(modeMap)[0];
     zoomMode.innerHTML = mode;
     setAll(zoom);
   });
@@ -46,6 +46,7 @@ function setAll(zoom: number) {
     const tabId = tabs[0].id;
     if (/^(f|ht)tps?:\/\//i.test(tabs[0].url)) {
       if (mode === "browser") {
+        chrome.tabs.sendMessage(tabId, { action: "zoom", zoom: 100 });
         browserZoom(tabId, zoom);
       } else if (mode === "css") {
         browserZoom(tabId, 100);
@@ -85,7 +86,7 @@ resetZoom.addEventListener("click", (e) => {
 });
 
 zoomMode.addEventListener("click", (e) => {
-  mode = modeMap1[mode];
+  mode = modeMap[mode];
   zoomMode.innerHTML = mode;
   chrome.storage.sync.set({ mode });
   setAll(zoom);
@@ -97,6 +98,7 @@ applyAll.addEventListener("click", (e) => {
     for (const t of tabs) {
       if (/^(f|ht)tps?:\/\//i.test(t.url)) {
         if (mode === "browser") {
+          chrome.tabs.sendMessage(t.id, { action: "zoom", zoom: 100 });
           browserZoom(t.id, zoom);
         } else if (mode === "css") {
           browserZoom(t.id, 100);

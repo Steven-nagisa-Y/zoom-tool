@@ -5,7 +5,14 @@ chrome.runtime.onInstalled.addListener(async () => {
   );
 });
 
+let mode1 = "browser";
+const modeMap1 = {
+  browser: "css",
+  css: "browser",
+};
+
 chrome.tabs.onZoomChange.addListener((e) => {
+  if (mode1 !== "browser") return;
   const zoom = Math.round(e.newZoomFactor * 100);
   console.log("Manual zoom:", zoom);
   const tabId = e.tabId;
@@ -15,11 +22,6 @@ chrome.tabs.onZoomChange.addListener((e) => {
     tabId,
   });
 });
-
-const modeMap = {
-  browser: "css",
-  css: "browser",
-};
 
 function browserZoom1(tabId: number, zoom: number) {
   chrome.tabs.setZoom(tabId, zoom / 100);
@@ -33,16 +35,17 @@ chrome.runtime.onMessage.addListener((e) => {
     let num = Number.parseInt(data["zoom-tool-set"]);
     const zoom = num >= 10 && num <= 300 ? num : 100;
     console.log("Current zoom:", zoom);
-    const mode = data["mode"] || Object.keys(modeMap)[0];
+    mode1 = data["mode"] || Object.keys(modeMap1)[0];
     chrome.tabs.query({ active: true }, function (tabs) {
       const tabId = tabs[0].id;
       if (/^(f|ht)tps?:\/\//i.test(tabs[0].url)) {
         chrome.tabs.getZoom(tabId, (e) => {
           if (Math.round(e * 100) !== zoom) {
-            if (mode === "browser") {
+            if (mode1 === "browser") {
+              chrome.tabs.sendMessage(tabId, { action: "zoom", zoom: 100 });
               browserZoom1(tabId, zoom);
-            } else if (mode === "css") {
-              browserZoom(tabId, 100);
+            } else if (mode1 === "css") {
+              browserZoom1(tabId, 100);
               chrome.tabs.sendMessage(tabId, { action: "zoom", zoom });
             }
           }
