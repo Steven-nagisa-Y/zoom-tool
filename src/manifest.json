@@ -17,6 +17,18 @@
         "default_icon": "assets/logo_128.png",
         "default_popup": "popup.html"
     },
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ],
+            "js": [
+                "js/content.js"
+            ],
+            "run_at": "document_start"
+        }
+    ],
     "web_accessible_resources": [
         {
             "resources": [
