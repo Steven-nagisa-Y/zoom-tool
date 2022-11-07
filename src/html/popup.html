@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <title>Zoom tool</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="./assets/bootstrap.min.css" />
+    <script defer src="./js/popup.js"></script>
+    <style type="text/css">
+      .main {
+        width: 300px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .part {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 2px 0;
+      }
+
+      .part button {
+        width: 5rem;
+      }
+
+      .part input {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <div class="part">
+        <input
+          type="range"
+          id="el-zoom"
+          name="el-zoom"
+          min="25"
+          max="200"
+          step="5"
+          list="tickmarks"
+        />
+      </div>
+      <div class="part">
+        <button id="minus-zoom" type="button" class="btn btn-primary">-</button>
+        <label for="zoom" id="zoom"></label><br />
+        <button id="plus-zoom" type="button" class="btn btn-primary">+</button>
+      </div>
+      <div class="part">
+        <button id="reset-zoom" type="button" class="btn btn-warning">
+          Reset
+        </button>
+        <button id="apply-all" type="button" class="btn btn-success">
+          All
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

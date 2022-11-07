@@ -1,0 +1,38 @@
+{
+    "name": "Zoom Tool",
+    "short_name": "Zoom",
+    "version": "1.0",
+    "description": "为你的浏览器页面提供缩放功能",
+    "homepage_url": "https://github.com/Steven-nagisa-Y/zoom-tool",
+    "author": "Steven-nagisa-Y",
+    "manifest_version": 3,
+    "icons": {
+        "64": "assets/logo_64.png",
+        "128": "assets/logo_128.png"
+    },
+    "background": {
+        "service_worker": "js/background.js"
+    },
+    "action": {
+        "default_icon": "assets/logo_128.png",
+        "default_popup": "popup.html"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "/assets/*"
+            ],
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ]
+        }
+    ],
+    "permissions": [
+        "storage",
+        "tabs",
+        "activeTab"
+    ],
+    "offline_enabled": true,
+    "minimum_chrome_version": "100"
+}
