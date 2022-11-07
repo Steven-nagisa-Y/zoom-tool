@@ -18,26 +18,6 @@ window.addEventListener("load", () => {
   load();
 });
 
-chrome.tabs.onZoomChange.addListener((e) => {
-  console.log(e);
-  zoom = Math.round(e.newZoomFactor * 100);
-  zoomShow.innerHTML = `${zoom}%`;
-  elZoom.value = zoom.toString();
-  chrome.storage.sync.set({ "zoom-tool-set": zoom }, () => {
-    console.log(`Set zoom-tool-set to ${zoom}`);
-  });
-  chrome.tabs.query({ active: true }, function (tabs) {
-    const tabId = tabs[0].id;
-    if (/^(f|ht)tps?:\/\//i.test(tabs[0].url)) {
-      chrome.action.setBadgeBackgroundColor({ color: "#fff" });
-      chrome.action.setBadgeText({
-        text: `${zoom}`,
-        tabId,
-      });
-    }
-  });
-});
-
 function setAll(zoom: number) {
   zoomShow.innerHTML = `${zoom}%`;
   elZoom.value = zoom.toString();
@@ -66,13 +46,13 @@ elZoom.addEventListener("change", (e) => {
 });
 
 plusZoom.addEventListener("click", (e) => {
-  zoom = zoom < 200 ? zoom + 25 : zoom;
+  zoom = zoom + 10 <= 300 ? zoom + 10 : zoom;
   setAll(zoom);
   e.stopPropagation();
 });
 
 minusZoom.addEventListener("click", (e) => {
-  zoom = zoom > 25 ? zoom - 25 : zoom;
+  zoom = zoom - 10 >= 10 ? zoom - 10 : zoom;
   setAll(zoom);
   e.stopPropagation();
 });
