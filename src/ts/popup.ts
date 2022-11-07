@@ -46,13 +46,13 @@ elZoom.addEventListener("change", (e) => {
 });
 
 plusZoom.addEventListener("click", (e) => {
-  zoom = zoom + 10 <= 300 ? zoom + 10 : zoom;
+  zoom = zoom + 5 <= 300 ? zoom + 5 : zoom;
   setAll(zoom);
   e.stopPropagation();
 });
 
 minusZoom.addEventListener("click", (e) => {
-  zoom = zoom - 10 >= 10 ? zoom - 10 : zoom;
+  zoom = zoom - 5 >= 10 ? zoom - 5 : zoom;
   setAll(zoom);
   e.stopPropagation();
 });
