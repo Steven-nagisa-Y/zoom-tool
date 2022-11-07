@@ -22,7 +22,7 @@
         margin: 2px 0;
       }
 
-      .part button {
+      .part button[action] {
         width: 5rem;
       }
 
@@ -45,13 +45,20 @@
         />
       </div>
       <div class="part">
-        <button id="minus-zoom" type="button" class="btn btn-primary">-</button>
+        <button id="minus-zoom" type="button" action class="btn btn-primary">
+          -
+        </button>
         <label for="zoom" id="zoom"></label><br />
-        <button id="plus-zoom" type="button" class="btn btn-primary">+</button>
+        <button id="plus-zoom" type="button" action class="btn btn-primary">
+          +
+        </button>
       </div>
       <div class="part">
         <button id="reset-zoom" type="button" class="btn btn-warning">
           Reset
+        </button>
+        <button id="zoom-mode" type="button" class="btn btn-info">
+          Browser
         </button>
         <button id="apply-all" type="button" class="btn btn-success">
           All

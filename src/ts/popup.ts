@@ -1,15 +1,32 @@
 let zoom = 100;
-const zoomShow = document.getElementById("zoom");
-const elZoom = document.getElementById("el-zoom") as HTMLInputElement;
-const plusZoom = document.getElementById("plus-zoom");
-const minusZoom = document.getElementById("minus-zoom");
-const resetZoom = document.getElementById("reset-zoom");
-const applyAll = document.getElementById("apply-all");
+let mode = "browser";
+const $ = function (id: string): HTMLElement {
+  return document.getElementById(id);
+};
+const zoomShow = $("zoom");
+const elZoom = $("el-zoom") as HTMLInputElement;
+const plusZoom = $("plus-zoom");
+const minusZoom = $("minus-zoom");
+const resetZoom = $("reset-zoom");
+const applyAll = $("apply-all");
+const zoomMode = $("zoom-mode");
+
+const modeMap1 = {
+  browser: "css",
+  css: "browser",
+};
+
+function browserZoom(tabId: number, zoom: number) {
+  chrome.tabs.setZoom(tabId, zoom / 100);
+  chrome.tabs.setZoomSettings(tabId, { scope: "per-tab" });
+}
 
 function load() {
-  chrome.storage.sync.get(["zoom-tool-set"], (res) => {
+  chrome.storage.sync.get(["zoom-tool-set", "mode"], (res) => {
     let num = Number.parseInt(res["zoom-tool-set"]);
     zoom = num >= 10 && num <= 300 ? num : 100;
+    mode = res["mode"] || Object.keys(modeMap1)[0];
+    zoomMode.innerHTML = mode;
     setAll(zoom);
   });
 }
@@ -28,8 +45,12 @@ function setAll(zoom: number) {
   chrome.tabs.query({ active: true }, function (tabs) {
     const tabId = tabs[0].id;
     if (/^(f|ht)tps?:\/\//i.test(tabs[0].url)) {
-      chrome.tabs.setZoom(tabId, zoom / 100);
-      chrome.tabs.setZoomSettings(tabId, { scope: "per-tab" });
+      if (mode === "browser") {
+        browserZoom(tabId, zoom);
+      } else if (mode === "css") {
+        browserZoom(tabId, 100);
+        chrome.tabs.sendMessage(tabId, { action: "zoom", zoom });
+      }
       chrome.action.setBadgeBackgroundColor({ color: "#fff" });
       chrome.action.setBadgeText({
         text: `${zoom}`,
@@ -63,12 +84,24 @@ resetZoom.addEventListener("click", (e) => {
   e.stopPropagation();
 });
 
+zoomMode.addEventListener("click", (e) => {
+  mode = modeMap1[mode];
+  zoomMode.innerHTML = mode;
+  chrome.storage.sync.set({ mode });
+  setAll(zoom);
+  e.stopPropagation();
+});
+
 applyAll.addEventListener("click", (e) => {
   chrome.tabs.query({ currentWindow: true }, function (tabs) {
     for (const t of tabs) {
       if (/^(f|ht)tps?:\/\//i.test(t.url)) {
-        chrome.tabs.setZoom(t.id, zoom / 100);
-        chrome.tabs.setZoomSettings(t.id, { scope: "per-tab" });
+        if (mode === "browser") {
+          browserZoom(t.id, zoom);
+        } else if (mode === "css") {
+          browserZoom(t.id, 100);
+          chrome.tabs.sendMessage(t.id, { action: "zoom", zoom });
+        }
         chrome.action.setBadgeBackgroundColor({ color: "#fff" });
         chrome.action.setBadgeText({
           text: `${zoom}`,
